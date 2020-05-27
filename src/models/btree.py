@@ -1,11 +1,15 @@
 from typing import List
-from ..lib import tree, table
+from ..lib.tree import Tree
+from ..lib.table import Table
 from .. import data
+from statistics import mode
 
 
-def train(data: table.Table):
-    for i in data.rows:
-        print(i)
+def train(data: Table):
+    labels = map(lambda i: 'like' if i['rating'] >= 0 else 'nah', data.rows)
+    guess = mode(labels)
 
+    if len(set(labels)) == 1 or len(data.headers) == 0:
+        return Tree(value=guess)
 
-train(data.trainingData)
+    print('Data ambiguous and features not empty, continue.')
