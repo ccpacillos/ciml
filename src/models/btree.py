@@ -39,20 +39,22 @@ def get_feature_score(feature: str, data: Table):
     sets = R.group_by(
         lambda i: 'yes' if i[feature] == 'y' else 'no', values)
 
-    yes_set = get_labels((sets['yes']))
-    no_set = get_labels((sets['no']))
+    yes_values = get_labels((sets['yes']))
+    no_values = get_labels((sets['no']))
 
-    guess_if_yes = mode(yes_set)
-    guess_if_no = mode(no_set)
+    guess_if_yes = mode(yes_values)
+    guess_if_no = mode(no_values)
 
-    def get_correct_guess(set, guess):
+    def count_correct_guesses(set, guess):
         return len(R.filter(lambda i: i == guess, set))
 
-    number_of_correct_guesses = get_correct_guess(
-        yes_set, guess_if_yes) + get_correct_guess(no_set, guess_if_no)
+    correct_yes_guesses = count_correct_guesses(yes_values, guess_if_yes)
+    correct_no_guesses = count_correct_guesses(no_values, guess_if_no)
 
-    return dict(score=(number_of_correct_guesses /
-                       len(values)) * 100, feature=feature)
+    score = ((correct_yes_guesses + correct_no_guesses) /
+             len(values)) * 100
+
+    return dict(score=score, feature=feature)
 
 
 def get_labels(set):
