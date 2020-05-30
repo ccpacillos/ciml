@@ -2,7 +2,7 @@ from .lib import table
 
 headers = ['easy', 'ai', 'sys', 'thy', 'morning', 'rating']
 
-trainingData = table.Table(
+training_data = table.Table(
     headers,
     [
         ['y', 'y', 'n', 'y', 'n', 2],
@@ -24,7 +24,7 @@ trainingData = table.Table(
     ])
 
 
-testData = table.Table(
+test_data = table.Table(
     headers,
     [
         ['y', 'y', 'n', 'y', 'n', 2],
