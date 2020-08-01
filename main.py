@@ -1,4 +1,4 @@
-from src.models import btree
+from src.models.btree import BinaryTree
 from src import data
 
-print(btree.train(data.training_data))
+print(BinaryTree(data.training_data).tree)

@@ -6,56 +6,59 @@ from statistics import mode
 import ramda as R
 
 
-def train(data: Table):
-    features = R.filter(lambda i: i != 'rating', data.headers)
+class BinaryTree:
+    def __init__(self, data: Table):
+        self.tree = self.__train(data)
 
-    labels = get_labels(data.rows)
-    guess = mode(labels)
+    def __train(self, data: Table):
+        features = R.filter(lambda i: i != 'rating', data.headers)
 
-    if len(set(labels)) == 1 or len(features) == 0:
-        return Tree(value=guess)
+        labels = self.__get_labels(data.rows)
+        guess = mode(labels)
 
-    scores = R.map(lambda feature: get_feature_score(feature, data), features)
+        if len(set(labels)) == 1 or len(features) == 0:
+            return Tree(value=guess)
 
-    top_feature = R.head(R.sort(
-        lambda a, b: b['score'] - a['score'], scores))['feature']
+        scores = R.map(lambda feature: self.__get_feature_score(
+            feature, data), features)
 
-    headers = R.filter(lambda feature: feature !=
-                       top_feature, data.headers)
+        top_feature = R.head(R.sort(
+            lambda a, b: b['score'] - a['score'], scores))['feature']
 
-    yes_set = data.filter(top_feature, 'y').pick_columns(headers)
-    no_set = data.filter(top_feature, 'n').pick_columns(headers)
+        headers = R.filter(lambda feature: feature !=
+                           top_feature, data.headers)
 
-    right = train(yes_set)
-    left = train(no_set)
+        yes_set = data.filter(top_feature, 'y').pick_columns(headers)
+        no_set = data.filter(top_feature, 'n').pick_columns(headers)
 
-    return Tree(value=top_feature, left=left, right=right)
+        right = self.__train(yes_set)
+        left = self.__train(no_set)
 
+        return Tree(value=top_feature, left=left, right=right)
 
-def get_feature_score(feature: str, data: Table):
-    values = data.get_values_by_headers(
-        [feature, 'rating']).rows
+    def __get_feature_score(self, feature: str, data: Table):
+        values = data.get_values_by_headers(
+            [feature, 'rating']).rows
 
-    sets = R.group_by(
-        lambda i: 'yes' if i[feature] == 'y' else 'no', values)
+        sets = R.group_by(
+            lambda i: 'yes' if i[feature] == 'y' else 'no', values)
 
-    yes_values = get_labels((sets['yes']))
-    no_values = get_labels((sets['no']))
+        yes_values = self.__get_labels((sets['yes']))
+        no_values = self.__get_labels((sets['no']))
 
-    guess_if_yes = mode(yes_values)
-    guess_if_no = mode(no_values)
+        guess_if_yes = mode(yes_values)
+        guess_if_no = mode(no_values)
 
-    def count_correct_guesses(set, guess):
-        return len(R.filter(lambda i: i == guess, set))
+        def count_correct_guesses(set, guess):
+            return len(R.filter(lambda i: i == guess, set))
 
-    correct_yes_guesses = count_correct_guesses(yes_values, guess_if_yes)
-    correct_no_guesses = count_correct_guesses(no_values, guess_if_no)
+        correct_yes_guesses = count_correct_guesses(yes_values, guess_if_yes)
+        correct_no_guesses = count_correct_guesses(no_values, guess_if_no)
 
-    score = ((correct_yes_guesses + correct_no_guesses) /
-             len(values)) * 100
+        score = ((correct_yes_guesses + correct_no_guesses) /
+                 len(values)) * 100
 
-    return dict(score=score, feature=feature)
+        return dict(score=score, feature=feature)
 
-
-def get_labels(set):
-    return R.map(lambda i: 'like' if i['rating'] >= 0 else 'nah', set)
+    def __get_labels(self, set):
+        return R.map(lambda i: 'like' if i['rating'] >= 0 else 'nah', set)
