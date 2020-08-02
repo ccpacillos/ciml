@@ -13,7 +13,10 @@ class KNearestNeighbor:
         self.dimensions = len(data.features)
 
     def __get_distances(self, point: Vector):
-        return [(self.__get_distance(tup[0], point), tup) for tup in self.data.feature_values]
+        return [
+            (self.__get_distance(tup[0], point), tup)
+            for tup in self.data.feature_values
+        ]
 
     def __get_distance(self, pointA: Vector, pointB: Vector):
         return math.sqrt(sum([(a - b) ** 2 for a, b in zip(pointA, pointB)]))
