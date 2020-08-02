@@ -1,7 +1,7 @@
 from ..lib.dataset import Dataset
 from ..models.knn import KNearestNeighbor
 
-data = Dataset(['easy', 'ai', 'sys', 'thy', 'morning'], [
+training_data = Dataset(['easy', 'ai', 'sys', 'thy', 'morning'], [
     ([1, 1, 0, 1, 0], 1),
     ([0, 1, 0, 0, 0], 1),
     ([0, 1, 1, 0, 1], 1),
@@ -27,6 +27,6 @@ test_points = [
     ([1, 0, 1, 0, 1], -1)
 ]
 
-knn = KNearestNeighbor(data)
+knn = KNearestNeighbor(data=training_data, k=3)
 
-print(knn.guess_label([0, 1, 1, 0, 1], 3))
+print('guess = ' + str(knn.guess_label(test_points[0][0])))

@@ -8,9 +8,10 @@ Vector = List[int]
 
 
 class KNearestNeighbor:
-    def __init__(self, data: Dataset):
+    def __init__(self, data: Dataset, k: int):
         self.data = data
         self.dimensions = len(data.features)
+        self.k = k
 
     def __get_distances(self, point: Vector):
         return [
@@ -21,13 +22,13 @@ class KNearestNeighbor:
     def __get_distance(self, pointA: Vector, pointB: Vector):
         return math.sqrt(sum([(a - b) ** 2 for a, b in zip(pointA, pointB)]))
 
-    def guess_label(self, point: Vector, k: int):
+    def guess_label(self, point: Vector):
         if len(point) != self.dimensions:
             raise Exception('Input point dimension mismatch.')
 
         distances = self.__get_distances(point)
         sorted_distances = sorted(distances, key=lambda tup: tup[0])
-        nearest_neighbors = sorted_distances[:k]
+        nearest_neighbors = sorted_distances[:self.k]
 
         sum_of_labels = sum([tup[1][1] for tup in nearest_neighbors])
 
