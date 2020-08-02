@@ -35,3 +35,6 @@ class Table:
 
         new_rows = map(lambda row: pick(headers, row), self.rows)
         return Table(headers=headers, rows=new_rows)
+
+    def printRows(self):
+        print(self.rows)
