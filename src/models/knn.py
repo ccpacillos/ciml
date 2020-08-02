@@ -18,7 +18,7 @@ class KNearestNeighbor:
     def __get_distance(self, pointA: Vector, pointB: Vector):
         return math.sqrt(sum([(a - b) ** 2 for a, b in zip(pointA, pointB)]))
 
-    def get_nearest(self, point: Vector, k: int):
+    def guess_label(self, point: Vector, k: int):
         if len(point) != self.dimensions:
             raise Exception('Input point dimension mismatch.')
 

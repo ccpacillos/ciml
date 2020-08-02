@@ -29,4 +29,4 @@ test_points = [
 
 knn = KNearestNeighbor(data)
 
-print(knn.get_nearest([0, 1, 1, 0, 1], 3))
+print(knn.guess_label([0, 1, 1, 0, 1], 3))
